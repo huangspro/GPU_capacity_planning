@@ -1,3 +1,7 @@
+"""
+绘制不同时段的两种请求数量的箱线图
+"""
+
 import matplotlib.pyplot as plt
 from src.dataset.dataset import Dataset
 

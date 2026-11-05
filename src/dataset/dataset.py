@@ -36,6 +36,16 @@ class Dataset:
 
         return result
 
+    def get_col_by_other_head(self, conditions: dict, field_name: str) -> list:
+        mask = pd.Series(True, index=self.data.index)
+
+        for head_name, value in conditions.items():
+            mask &= (self.data[head_name] == value)
+
+        result = self.data.loc[mask, field_name].tolist()
+
+        return result
+
     def get_time_range(self, start_time: str, end_time: str, field_name: str) -> list:
         timestamps = pd.to_datetime(self.data["timestamp"])
 
