@@ -1,8 +1,0 @@
-\contentsline {section}{\numberline {0.1}Step 1}{2}{section.0.1}%
-\contentsline {subsection}{\numberline {0.1.1}Drawing the Box Plots}{2}{subsection.0.1.1}%
-\contentsline {subsection}{\numberline {0.1.2}Establish Poisson distribution}{2}{subsection.0.1.2}%
-\contentsline {section}{\numberline {0.2}Step 2}{3}{section.0.2}%
-\contentsline {subsection}{\numberline {0.2.1}Report for service time}{3}{subsection.0.2.1}%
-\contentsline {subsection}{\numberline {0.2.2}Report for cold start service time}{3}{subsection.0.2.2}%
-\contentsline {subsection}{\numberline {0.2.3}Establish Probability Model}{3}{subsection.0.2.3}%
-\contentsline {subsection}{\numberline {0.2.4}Estimate Model Parameters}{3}{subsection.0.2.4}%

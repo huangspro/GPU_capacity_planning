@@ -2,7 +2,8 @@
 *.aux
 *.log
 *.gz
-
+*.out
+*.toc
 
 __pycache__/
 *.py[codz]
