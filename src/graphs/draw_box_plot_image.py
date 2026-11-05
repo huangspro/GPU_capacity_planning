@@ -12,7 +12,7 @@ new_dataset = Dataset(
 periods = ["night", "morning", "daytime", "peak", "late"]
 
 data = [
-    new_dataset.get_period(period, "image_requests)
+    new_dataset.get_period(period, "image_requests")
     for period in periods
 ]
 
@@ -29,4 +29,5 @@ plt.xlabel("Period")
 plt.title("Request Count Distribution by Period")
 plt.grid(axis="y", linestyle="--", alpha=0.5)
 
-plt.show()
+plt.savefig("/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/image_requests_boxplot.png", dpi=300, bbox_inches="tight")
+

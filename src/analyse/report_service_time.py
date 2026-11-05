@@ -90,5 +90,4 @@ for ax, (data, title) in zip(axes, datasets):
 
 plt.tight_layout()
 
-# Display figure only, without saving
-plt.show()
+plt.savefig("/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/service_time_report.png", dpi=300, bbox_inches="tight")
