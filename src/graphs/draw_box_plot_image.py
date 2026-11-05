@@ -8,7 +8,7 @@ new_dataset = Dataset(
 periods = ["night", "morning", "daytime", "peak", "late"]
 
 data = [
-    new_dataset.get_period(period, "total_requests")
+    new_dataset.get_period(period, "image_requests)
     for period in periods
 ]
 
