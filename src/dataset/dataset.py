@@ -27,6 +27,15 @@ class Dataset:
 
         return result
 
+    # 获取符合某个 period 的某一列字段，返回 list
+    def get_request_type(self, request_type, field_name: str) -> list:
+        result = self.data.loc[
+            self.data["request_type"] == request_type,
+            field_name
+        ].tolist()
+
+        return result
+
     def get_time_range(self, start_time: str, end_time: str, field_name: str) -> list:
         timestamps = pd.to_datetime(self.data["timestamp"])
 

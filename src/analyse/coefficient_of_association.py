@@ -1,3 +1,8 @@
+"""
+计算 NT 与 NI 的相关系数，判断两类请求是否可能受到共同流量冲击，即大量多模
+态请求的冲击。
+"""
+
 from src.dataset.dataset import Dataset
 
 new_dataset = Dataset(
