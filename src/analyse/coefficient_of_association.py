@@ -19,14 +19,10 @@ def correlation(X, Y):
     mean_x = sum(X) / n
     mean_y = sum(Y) / n
 
-    numerator = sum(
-        (X[i] - mean_x) * (Y[i] - mean_y)
-        for i in range(n)
-    )
+    numerator = sum((X[i] - mean_x) * (Y[i] - mean_y) for i in range(n))
 
     denominator = (
-        sum((x - mean_x) ** 2 for x in X)
-        * sum((y - mean_y) ** 2 for y in Y)
+        sum((x - mean_x) ** 2 for x in X) * sum((y - mean_y) ** 2 for y in Y)
     ) ** 0.5
 
     return numerator / denominator

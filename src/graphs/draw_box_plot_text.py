@@ -11,22 +11,19 @@ new_dataset = Dataset(
 
 periods = ["night", "morning", "daytime", "peak", "late"]
 
-data = [
-    new_dataset.get_period(period, "text_requests")
-    for period in periods
-]
+data = [new_dataset.get_period(period, "text_requests") for period in periods]
 
 plt.figure(figsize=(10, 6))
 
-plt.boxplot(
-    data,
-    tick_labels=periods,
-    patch_artist=True
-)
+plt.boxplot(data, tick_labels=periods, patch_artist=True)
 
 plt.ylabel("total_requests")
 plt.xlabel("Period")
 plt.title("Request Count Distribution by Period")
 plt.grid(axis="y", linestyle="--", alpha=0.5)
 
-plt.savefig("/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/text_requests_boxplot.png", dpi=300, bbox_inches="tight")
+plt.savefig(
+    "/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/text_requests_boxplot.png",
+    dpi=300,
+    bbox_inches="tight",
+)

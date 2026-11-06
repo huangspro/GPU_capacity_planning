@@ -5,17 +5,23 @@
 
 from src.dataset.dataset import Dataset
 
-
 new_dataset = Dataset(
     "/home/hhy/hhy-data/Python/GPU_capacity_planning/data/service_time.csv"
 )
 
-text_hot = new_dataset.get_col_by_other_head({"cold_start":0, "request_type":"text"}, "gpu_seconds")
-text_cold = new_dataset.get_col_by_other_head({"cold_start":1, "request_type":"text"}, "gpu_seconds")
+text_hot = new_dataset.get_col_by_other_head(
+    {"cold_start": 0, "request_type": "text"}, "gpu_seconds"
+)
+text_cold = new_dataset.get_col_by_other_head(
+    {"cold_start": 1, "request_type": "text"}, "gpu_seconds"
+)
 
-image_hot = new_dataset.get_col_by_other_head({"cold_start":0, "request_type":"image"}, "gpu_seconds")
-image_cold = new_dataset.get_col_by_other_head({"cold_start":1, "request_type":"image"}, "gpu_seconds")
-
+image_hot = new_dataset.get_col_by_other_head(
+    {"cold_start": 0, "request_type": "image"}, "gpu_seconds"
+)
+image_cold = new_dataset.get_col_by_other_head(
+    {"cold_start": 1, "request_type": "image"}, "gpu_seconds"
+)
 
 
 ave_text_hot = sum(text_hot) / len(text_hot)

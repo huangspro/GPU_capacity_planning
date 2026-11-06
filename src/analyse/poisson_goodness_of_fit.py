@@ -1,10 +1,14 @@
+"""
+至少使用一种方法检验泊松假设，例如 χ2 拟合检验。若拒绝模型，需要指出不符合
+之处，并提出一种可执行的修正
+"""
+
 from math import exp, log
 
 from scipy.stats import chi2
 from scipy.special import gammaln
 
 from src.dataset.dataset import Dataset
-
 
 new_dataset = Dataset(
     "/home/hhy/hhy-data/Python/GPU_capacity_planning/data/request_count.csv"
@@ -74,10 +78,7 @@ def poisson_test(data, frequency, lam, name):
 
         if groups:
             old_o, old_e = groups[-1]
-            groups[-1] = (
-                old_o + current_o,
-                old_e + current_e
-            )
+            groups[-1] = (old_o + current_o, old_e + current_e)
 
         else:
             groups.append((current_o, current_e))
@@ -113,17 +114,7 @@ def poisson_test(data, frequency, lam, name):
 
 
 # 对 NT 进行泊松拟合优度检验
-poisson_test(
-    t_r,
-    t_dict,
-    ave_t_r,
-    "NT (Text Requests)"
-)
+poisson_test(t_r, t_dict, ave_t_r, "NT (Text Requests)")
 
 # 对 NI 进行泊松拟合优度检验
-poisson_test(
-    i_r,
-    i_dict,
-    ave_i_r,
-    "NI (Image Requests)"
-)
+poisson_test(i_r, i_dict, ave_i_r, "NI (Image Requests)")

@@ -1,8 +1,3 @@
-"""
-分别研究文本请求与图像请求的 GPU 处理时间：报告样本量、均值、标准差、中位
-数、95% 与 99% 分位数，并画出直方图
-"""
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -28,16 +23,19 @@ def calculate_statistics(data, name):
         "Median": data.median(),
         "95% Quantile": data.quantile(0.95),
         "99% Quantile": data.quantile(0.99),
+        "Second Moment E(X^2)": (data**2).mean(),
     }
 
     return stats
 
 
 # Calculate statistics
-results = pd.DataFrame([
-    calculate_statistics(text, "Text"),
-    calculate_statistics(image, "Image"),
-])
+results = pd.DataFrame(
+    [
+        calculate_statistics(text, "Text"),
+        calculate_statistics(image, "Image"),
+    ]
+)
 
 print(results.to_string(index=False))
 
@@ -50,36 +48,21 @@ image = pd.to_numeric(pd.Series(image), errors="coerce").dropna()
 # Plot histograms
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-datasets = [
-    (text, "Text Requests"),
-    (image, "Image Requests")
-]
+datasets = [(text, "Text Requests"), (image, "Image Requests")]
 
 for ax, (data, title) in zip(axes, datasets):
 
     # Histogram
-    ax.hist(
-        data,
-        bins=50,
-        density=True,
-        alpha=0.7,
-        edgecolor="black"
-    )
+    ax.hist(data, bins=50, density=True, alpha=0.7, edgecolor="black")
 
     # Mean
     ax.axvline(
-        data.mean(),
-        linestyle="--",
-        linewidth=2,
-        label=f"Mean = {data.mean():.4f}"
+        data.mean(), linestyle="--", linewidth=2, label=f"Mean = {data.mean():.4f}"
     )
 
     # Median
     ax.axvline(
-        data.median(),
-        linestyle=":",
-        linewidth=2,
-        label=f"Median = {data.median():.4f}"
+        data.median(), linestyle=":", linewidth=2, label=f"Median = {data.median():.4f}"
     )
 
     ax.set_title(title, fontsize=14)
@@ -90,4 +73,8 @@ for ax, (data, title) in zip(axes, datasets):
 
 plt.tight_layout()
 
-plt.savefig("/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/service_time_report.png", dpi=300, bbox_inches="tight")
+plt.savefig(
+    "/home/hhy/hhy-data/Python/GPU_capacity_planning/graphs/service_time_report.png",
+    dpi=300,
+    bbox_inches="tight",
+)
