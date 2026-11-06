@@ -235,9 +235,14 @@
 	\subsection{Estimation of $E(W)$ and $D(W)$}
 	We have:
 	\[
-	E(W) = E(\sum_{j=1}^{N_T} T_j) + E(\sum_{k=1}^{N_I} I_k)
-	= N_TE(T) + N_IE(I)
-	\]
+\begin{aligned}
+E(W)
+&= E\left(\sum_{j=1}^{N_T}T_j\right)
+ + E\left(\sum_{k=1}^{N_I}I_k\right)\\
+&= E(N_T)E(T)+E(N_I)E(I)\\
+&= \lambda_T\mu_T+\lambda_I\mu_I.
+\end{aligned}
+\]
 	and
 	\[
 	\begin{aligned}
