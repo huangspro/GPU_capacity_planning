@@ -18,14 +18,14 @@
 	
 	\subsection{Drawing the Box Plots}
 		
-		\begin{figure}
+		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.7\linewidth]{../graphs/text_requests_boxplot}
 			\caption{Box plots of text requests}
 			\label{fig:textrequestsboxplot}
 		\end{figure}
 		
-		\begin{figure}
+		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.7\linewidth]{../graphs/image_requests_boxplot}
 			\caption{Box plots of image requests}
@@ -66,8 +66,53 @@
 		\hat{\lambda} - 1.96\sqrt{\frac{\hat{\lambda}}{n}},
 		\hat{\lambda} + 1.96\sqrt{\frac{\hat{\lambda}}{n}}
 		\right].
-		\]
+		\]. The estimation result is shown on \cref{tab:poisson_parameters_estimation}.
+		
+		\begin{table}[H]
+			\centering
+			\caption{Parameters Estimation of Poisson distribution}
+			\label{tab:poisson_parameters_estimation}
+			\begin{tabular}{ccccccc}
+				\hline
+				Type & $ \lambda $ & 95\% (s)  \\
+				\hline
+				Text  & 45.4513 & [45.3583, 45.5444]  \\
+				Image & 3.6389 & [3.6126, 3.6653]  \\
+				\hline
+			\end{tabular}
+		\end{table}
 	
+	\subsection{Validate Poisson Distribution}
+		To validate the adaptability of Poisson distribution, we implemented $ \chi $ goodness-of-fit test, specifically
+		\[
+			\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i}
+		\], where $ O_i $ denotes the observed frequency of class i and $ E_i $ denotes the expected frequency of class i. The result is presented on \cref{tab:poisson_goodness-of-fit}
+		\begin{table}[H]
+			\centering
+			\caption{Parameters Estimation of Poisson distribution}
+			\label{tab:poisson_goodness-of-fit}
+			\begin{tabular}{ccccccc}
+				\hline
+				Type & $ \chi^2 $ & conclusion  \\
+				\hline
+				Text  & 8369296.14 & Rejected  \\
+				Image & 72418.63 & Rejected  \\
+				\hline
+			\end{tabular}
+		\end{table}
+		
+		
+	\subsection{Correlation Coefficient of $ N_t $ and $ N_i $}
+		The correlation coefficient can be described as 
+		\[
+			r = \frac{\sum_{i=1}^{n}(N_t-\bar{N})(N_i-\bar{N_i})}
+			{\sqrt{\sum_{i=1}^{n}(N_t-\bar{N_t})^2}\sqrt{\sum_{i=1}^{n}(N_i-\bar{N_i})^2}}
+		\].
+		The result is approximately equal to 0.7851, which suggest a strong relation between text and image requests.
+		
+		
+		
+		
 	\section{Step 2}
 	\subsection{Report for service time}
 
@@ -78,7 +123,7 @@
 			\label{fig:servicetimereport}
 		\end{figure}
 		
-			\begin{table}[htbp]
+		\begin{table}[htbp]
 			\centering
 			\caption{Descriptive Statistics of Text and Image Request Durations (seconds)}
 			\label{tab:request_statistics}
