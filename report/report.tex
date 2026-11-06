@@ -14,131 +14,265 @@
 	\tableofcontents
 	\newpage
 	
+	\section{Denotation}
+	\begin{itemize}
+		\item $N_T$: Number of text requests;
+		\item $N_I$: Number of image requests;
+		\item $T_1, T_2, \ldots$: GPU processing time of each text request;
+		\item $I_1, I_2, \ldots$: GPU processing time of each image request;
+		\item $W$: Total GPU workload within one minute.
+	\end{itemize}
+	
+	Accordingly, the total GPU workload can be expressed as:
+	\begin{equation}
+		W = \sum_{j=1}^{N_T} T_j + \sum_{k=1}^{N_I} I_k.
+	\end{equation}
+	
 	\section{Step 1}
 	
 	\subsection{Drawing the Box Plots}
-		
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.7\linewidth]{../graphs/text_requests_boxplot}
-			\caption{Box plots of text requests}
-			\label{fig:textrequestsboxplot}
-		\end{figure}
-		
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.7\linewidth]{../graphs/image_requests_boxplot}
-			\caption{Box plots of image requests}
-			\label{fig:imagerequestsboxplot}
-		\end{figure}
-		
-		The box plots for the two types of requests are presented in
-		\cref{fig:textrequestsboxplot} and \cref{fig:imagerequestsboxplot},
-		respectively. It is evident that an analysis restricted to peak
-		hours on weekdays alone cannot adequately illustrate the actual
-		trends in request volumes.
 	
-	\subsection{Establish Poisson distribution}
-		Poisson distributions are assumed for $N_t$ and $N_i$,
-		specifically,
-		
-		\[
-		P(N_t=k) = \frac{\lambda_t^k e^{-\lambda_t}}{k!},
-		\]
-		
-		\[
-		P(N_i=k) = \frac{\lambda_i^k e^{-\lambda_i}}{k!}.
-		\]
-		
-		The parameters $\lambda_t$ and $\lambda_i$ can be estimated
-		using the sample mean:
-		
-		\[
-		\hat{\lambda} = \frac{1}{n}\sum_{i=1}^{n}N_i.
-		\]
-		
-		The 95\% confidence interval for the Poisson parameter
-		$\lambda$ can be approximated using the normal approximation:
-		
-		\[
-		CI_{95\%} =
-		\left[
-		\hat{\lambda} - 1.96\sqrt{\frac{\hat{\lambda}}{n}},
-		\hat{\lambda} + 1.96\sqrt{\frac{\hat{\lambda}}{n}}
-		\right].
-		\]. The estimation result is shown on \cref{tab:poisson_parameters_estimation}.
-		
-		\begin{table}[H]
-			\centering
-			\caption{Parameters Estimation of Poisson distribution}
-			\label{tab:poisson_parameters_estimation}
-			\begin{tabular}{ccccccc}
-				\hline
-				Type & $ \lambda $ & 95\% (s)  \\
-				\hline
-				Text  & 45.4513 & [45.3583, 45.5444]  \\
-				Image & 3.6389 & [3.6126, 3.6653]  \\
-				\hline
-			\end{tabular}
-		\end{table}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../graphs/text_requests_boxplot}
+		\caption{Box plots of text requests}
+		\label{fig:textrequestsboxplot}
+	\end{figure}
 	
-	\subsection{Validate Poisson Distribution}
-		To validate the adaptability of Poisson distribution, we implemented $ \chi $ goodness-of-fit test, specifically
-		\[
-			\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i}
-		\], where $ O_i $ denotes the observed frequency of class i and $ E_i $ denotes the expected frequency of class i. The result is presented on \cref{tab:poisson_goodness-of-fit}
-		\begin{table}[H]
-			\centering
-			\caption{Parameters Estimation of Poisson distribution}
-			\label{tab:poisson_goodness-of-fit}
-			\begin{tabular}{ccccccc}
-				\hline
-				Type & $ \chi^2 $ & conclusion  \\
-				\hline
-				Text  & 8369296.14 & Rejected  \\
-				Image & 72418.63 & Rejected  \\
-				\hline
-			\end{tabular}
-		\end{table}
-		
-		
-	\subsection{Correlation Coefficient of $ N_t $ and $ N_i $}
-		The correlation coefficient can be described as 
-		\[
-			r = \frac{\sum_{i=1}^{n}(N_t-\bar{N})(N_i-\bar{N_i})}
-			{\sqrt{\sum_{i=1}^{n}(N_t-\bar{N_t})^2}\sqrt{\sum_{i=1}^{n}(N_i-\bar{N_i})^2}}
-		\].
-		The result is approximately equal to 0.7851, which suggest a strong relation between text and image requests.
-		
-		
-		
-		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\linewidth]{../graphs/image_requests_boxplot}
+		\caption{Box plots of image requests}
+		\label{fig:imagerequestsboxplot}
+	\end{figure}
+	
+	The box plots for the two types of requests are presented in
+	\cref{fig:textrequestsboxplot} and \cref{fig:imagerequestsboxplot},
+	respectively. As can be observed, an analysis limited exclusively
+	to peak hours on weekdays is insufficient to provide a
+	comprehensive representation of the actual trends in request
+	volumes.
+	
+	\subsection{Establishing Poisson Distributions}
+	We assume that $N_t$ and $N_i$ follow Poisson distributions,
+	which can be expressed as follows:
+	
+	\[
+	P(N_t=k) = \frac{\lambda_t^k e^{-\lambda_t}}{k!},
+	\]
+	
+	\[
+	P(N_i=k) = \frac{\lambda_i^k e^{-\lambda_i}}{k!}.
+	\]
+	
+	The parameters $\lambda_t$ and $\lambda_i$ can be estimated
+	using the corresponding sample means:
+	
+	\[
+	\hat{\lambda} = \frac{1}{n}\sum_{i=1}^{n}N_i.
+	\]
+	
+	The 95\% confidence interval for the Poisson parameter
+	$\lambda$ can be approximated using the normal approximation:
+	
+	\[
+	CI_{95\%} =
+	\left[
+	\hat{\lambda} - 1.96\sqrt{\frac{\hat{\lambda}}{n}},
+	\hat{\lambda} + 1.96\sqrt{\frac{\hat{\lambda}}{n}}
+	\right].
+	\]
+	The estimation results are presented in
+	\cref{tab:poisson_parameters_estimation}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Parameter Estimation for Poisson Distributions}
+		\label{tab:poisson_parameters_estimation}
+		\begin{tabular}{ccccccc}
+			\hline
+			Type & $ \lambda $ & 95\% (s)  \\
+			\hline
+			Text  & 45.4513 & [45.3583, 45.5444]  \\
+			Image & 3.6389 & [3.6126, 3.6653]  \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Validating the Poisson Distributions}
+	To evaluate the goodness of fit of the Poisson distributions,
+	we conducted a $\chi^2$ goodness-of-fit test, defined as:
+	\[
+	\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i},
+	\]
+	where $O_i$ denotes the observed frequency of class $i$,
+	and $E_i$ denotes its corresponding expected frequency.
+	The test results are presented in
+	\cref{tab:poisson_goodness-of-fit}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Results of the Poisson Goodness-of-Fit Tests}
+		\label{tab:poisson_goodness-of-fit}
+		\begin{tabular}{ccccccc}
+			\hline
+			Type & $ \chi^2 $ & Conclusion  \\
+			\hline
+			Text  & 8369296.14 & Rejected  \\
+			Image & 72418.63 & Rejected  \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Correlation Coefficient Between $N_t$ and $N_i$}
+	The correlation coefficient between $N_t$ and $N_i$ is
+	defined as:
+	\[
+	r = \frac{\sum_{i=1}^{n}(N_t-\bar{N})(N_i-\bar{N_i})}
+	{\sqrt{\sum_{i=1}^{n}(N_t-\bar{N_t})^2}\sqrt{\sum_{i=1}^{n}(N_i-\bar{N_i})^2}}
+	\].
+	The estimated correlation coefficient is approximately 0.7851,
+	indicating a strong positive correlation between text and image
+	request volumes. This suggests that the two types of requests
+	are likely influenced by common traffic patterns, potentially
+	associated with multimodal requests.
+	
+	
 	\section{Step 2}
-	\subsection{Report for service time}
-
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=1\linewidth]{../graphs/service_time_report}
-			\caption{Histogram of two types of requests}
-			\label{fig:servicetimereport}
-		\end{figure}
-		
-		\begin{table}[htbp]
-			\centering
-			\caption{Descriptive Statistics of Text and Image Request Durations (seconds)}
-			\label{tab:request_statistics}
-			\begin{tabular}{ccccccc}
-				\hline
-				Type & Size & Mean (s) & Std (s)
-				& Median (s) & 95\% (s) & 99\% (s) \\
-				\hline
-				Text  & 4000 & 0.762147 & 0.628502 & 0.633650 & 1.464310 & 3.528130 \\
-				Image & 1600 & 7.476124 & 6.247750 & 5.916300 & 17.529665 & 29.749451 \\
-				\hline
-			\end{tabular}
-		\end{table}
+	\subsection{Estimation of $W$}
+	We have:
+	\[
+	E(W) = E(\sum_{j=1}^{N_T} T_j) + E(\sum_{k=1}^{N_I} I_k)
+	= N_tE(T) + N_IE(I)
+	\]
+	and
+	\[
+	D(W) = D(\sum_{j=1}^{N_T} T_j) + D(\sum_{k=1}^{N_I} I_k)
+	= N_tD(T) + N_ID(I)
+	\].
+	The estimated results are $E(W) = 61.8457$ and
+	$D(W) = 51.3014$.
 	
-	\subsection{Report for cold start service time}
-	\subsection{Establish Probability Model}
-	\subsection{Estimate Model Parameters}
+	\subsection{Assumption of Dependence Between $ N_T $ and $ N_I $}
+	The assumption that $ N_T $ and $ N_I $ do not subject to independence assumption will lead to $ Cov(N_T, N_I) \neq 0 $, which will cause error in 
+	\[
+		D(W) = N_tD(T) + N_ID(I) + Cov(T, I)
+	\].
+	
+	\section{Step 3}
+	\subsection{title}
+	
+	\subsection{Report on Service Time Data}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{../graphs/service_time_report}
+		\caption{Histograms of the two types of requests}
+		\label{fig:servicetimereport}
+	\end{figure}
+	
+	\begin{table}[htbp]
+		\centering
+		\caption{Descriptive Statistics of Text and Image Request Durations (seconds)}
+		\label{tab:request_statistics}
+		\begin{tabular}{ccccccc}
+			\hline
+			Type & Size & Mean (s) & Std (s)
+			& Median (s) & 95\% (s) & 99\% (s) \\
+			\hline
+			Text  & 4000 & 0.762147 & 0.628502 & 0.633650 & 1.464310 & 3.528130 \\
+			Image & 1600 & 7.476124 & 6.247750 & 5.916300 & 17.529665 & 29.749451 \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Analysis of the Effect of Cold Starts on Service Time}
+	GPU system cold starts can result in substantial increases
+	in response latency. The results presented in
+	\cref{tab:affect_of_cold_start} demonstrate that cold starts
+	can considerably extend request processing times. According
+	to the law of total probability:
+	\[
+	P(T) = P(cold start)P(t|cold start) + P(hot start)P(t|hot start)
+	\],
+	cold starts can contribute to an increase in the overall
+	mean response time and a heavier right tail in the
+	response time distribution.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Effect of Cold Starts on Response Time}
+		\label{tab:affect_of_cold_start}
+		\begin{tabular}{ccccccc}
+			\hline
+			Type & Cold Start(s) & Hot Start(s)  \\
+			\hline
+			Text  & 3.6992 & 0.6884 \\
+			Image & 23.5168 & 6.6541  \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Establishing the Probability Model}
+	A probability model can be constructed based on the
+	observed service time distributions. In this report,
+	the Gaussian distribution is adopted as the underlying
+	probability model. Specifically:
+	\[
+	f(t_T)=\frac{1}{\sqrt{2\pi}\sigma_T}
+	\exp\left(-\frac{(x-\mu_T)^2}{2\sigma_T^2}\right), 
+	f(t_I)=\frac{1}{\sqrt{2\pi}\sigma_I}
+	\exp\left(-\frac{(x-\mu_I)^2}{2\sigma_I^2}\right)
+	\]
+	
+	\subsection{Estimating the Model Parameters}
+	
+	The estimated model parameters are presented in
+	\cref{tab:gaussian_estimation}.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Estimated Parameters of the Gaussian Distributions}
+		\label{tab:gaussian_estimation}
+		\begin{tabular}{ccccccc}
+			\hline
+			$ \mu_T $ & $ \sigma^2_T $ & $ \mu_I $ & $ \sigma_I^2 $ & $ E(T^2) $ & $ E(I^2) $\\
+			\hline
+			0.7621 & 0.6285 & 7.4761 & 6.2477 & 0.9758 & 94.9024
+		\end{tabular}
+	\end{table}
+	
+	\section{Step 4}
+	
+	\subsection{Estimation of $W$}
+	We have:
+	\[
+	E(W) = E(\sum_{j=1}^{N_T} T_j) + E(\sum_{k=1}^{N_I} I_k)
+	= N_tE(T) + N_IE(I)
+	\]
+	and
+	\[
+	D(W) = D(\sum_{j=1}^{N_T} T_j) + D(\sum_{k=1}^{N_I} I_k)
+	= N_tD(T) + N_ID(I)
+	\].
+	The estimated results are $E(W) = 61.8457$ and
+	$D(W) = 51.3014$.
+	
+	\subsection{Estimation of $m$}
+	To estimate $m$, which is subject to the condition
+	$P(W>48m)$, we can use the following approximation:
+	\[
+	P(W>48m) = P(\hat{W} > \frac{48m-E(W)}{\sqrt{D(W)}})
+	\],
+	where
+	\[
+	\hat{W} = \frac{W-E(W)}{\sqrt{D(W)}}
+	\]
+	and $\hat{W}\sim\mathcal{N}(0,1)$.
+	The resulting estimate is $m = 2.09$.
+	
+	\subsection{Rationale and Risks of Using the Central Limit Theorem}
+	\section{Step 5}
+	\subsection{title}
+	
 \end{document}

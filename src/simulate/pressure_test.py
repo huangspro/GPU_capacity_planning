@@ -27,6 +27,8 @@ image_time_deviation = 6.247750
 E_W = text_ave_count * text_ave_time + image_ave_count * image_ave_time
 D_W = text_ave_count * text_time_deviation + image_ave_count * image_time_deviation
 
+print("E_W: ", E_W, "D_W: ", D_W)
+
 test_failed_count = 0
 
 
