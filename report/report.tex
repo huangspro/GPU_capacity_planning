@@ -2,8 +2,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{cleveref}
 \usepackage{float}
+\usepackage{amsmath}
+\usepackage{cleveref}
 
 \title{Report}
 \author{Haoyu Huang}
@@ -16,10 +17,11 @@
 	
 	\section{Denotation}
 	\begin{itemize}
-		\item $N_T$: Number of text requests;
-		\item $N_I$: Number of image requests;
-		\item $T_1, T_2, \ldots$: GPU processing time of each text request;
-		\item $I_1, I_2, \ldots$: GPU processing time of each image request;
+		\item $m$: The number GPU;
+		\item $N_T$: Number of text requests within one minute;
+		\item $N_I$: Number of image requests within one minute;
+		\item $T_1, T_2, \ldots$: GPU processing time of each text request within one minute;
+		\item $I_1, I_2, \ldots$: GPU processing time of each image request within one minute;
 		\item $W$: Total GPU workload within one minute.
 	\end{itemize}
 	
@@ -59,9 +61,6 @@
 	
 	\[
 	P(N_t=k) = \frac{\lambda_t^k e^{-\lambda_t}}{k!},
-	\]
-	
-	\[
 	P(N_i=k) = \frac{\lambda_i^k e^{-\lambda_i}}{k!}.
 	\]
 	
@@ -70,7 +69,7 @@
 	
 	\[
 	\hat{\lambda} = \frac{1}{n}\sum_{i=1}^{n}N_i.
-	\]
+	\], where n denotes the total minutes.
 	
 	The 95\% confidence interval for the Poisson parameter
 	$\lambda$ can be approximated using the normal approximation:
@@ -138,29 +137,9 @@
 	associated with multimodal requests.
 	
 	
+	
+	
 	\section{Step 2}
-	\subsection{Estimation of $W$}
-	We have:
-	\[
-	E(W) = E(\sum_{j=1}^{N_T} T_j) + E(\sum_{k=1}^{N_I} I_k)
-	= N_tE(T) + N_IE(I)
-	\]
-	and
-	\[
-	D(W) = D(\sum_{j=1}^{N_T} T_j) + D(\sum_{k=1}^{N_I} I_k)
-	= N_tD(T) + N_ID(I)
-	\].
-	The estimated results are $E(W) = 61.8457$ and
-	$D(W) = 51.3014$.
-	
-	\subsection{Assumption of Dependence Between $ N_T $ and $ N_I $}
-	The assumption that $ N_T $ and $ N_I $ do not subject to independence assumption will lead to $ Cov(N_T, N_I) \neq 0 $, which will cause error in 
-	\[
-		D(W) = N_tD(T) + N_ID(I) + Cov(T, I)
-	\].
-	
-	\section{Step 3}
-	\subsection{title}
 	
 	\subsection{Report on Service Time Data}
 	
@@ -212,67 +191,107 @@
 			\hline
 		\end{tabular}
 	\end{table}
-	
+
 	\subsection{Establishing the Probability Model}
-	A probability model can be constructed based on the
-	observed service time distributions. In this report,
-	the Gaussian distribution is adopted as the underlying
-	probability model. Specifically:
+	
+	A probability model can be constructed based on the observed service time distributions. In this report, the Gaussian distribution is adopted as the underlying probability model. Specifically:
+	
 	\[
-	f(t_T)=\frac{1}{\sqrt{2\pi}\sigma_T}
-	\exp\left(-\frac{(x-\mu_T)^2}{2\sigma_T^2}\right), 
-	f(t_I)=\frac{1}{\sqrt{2\pi}\sigma_I}
-	\exp\left(-\frac{(x-\mu_I)^2}{2\sigma_I^2}\right)
+	f(T)=\frac{1}{\sqrt{2\pi}\sigma_T}
+	\exp\left(-\frac{(x-\mu_T)^2}{2\sigma_T^2}\right),
+	\]
+	
+	\[
+	f(I)=\frac{1}{\sqrt{2\pi}\sigma_I}
+	\exp\left(-\frac{(x-\mu_I)^2}{2\sigma_I^2}\right),
+	\]
+	
+	where $T$ and $I$ denote the service durations of individual text and image requests, respectively. Here, $\mu_T$ and $\mu_I$ represent the mean service times, while $\sigma_T^2$ and $\sigma_I^2$ denote the corresponding variances. Furthermore, $E(T^2)$ and $E(I^2)$ represent the second raw moments of the respective service time distributions, which are related to the means and variances by:
+	
+	\[
+	E(T^2)=\sigma_T^2+\mu_T^2,
+	\qquad
+	E(I^2)=\sigma_I^2+\mu_I^2.
 	\]
 	
 	\subsection{Estimating the Model Parameters}
 	
-	The estimated model parameters are presented in
-	\cref{tab:gaussian_estimation}.
+	The estimated model parameters are presented in \cref{tab:gaussian_estimation}.
 	
 	\begin{table}[H]
 		\centering
 		\caption{Estimated Parameters of the Gaussian Distributions}
 		\label{tab:gaussian_estimation}
-		\begin{tabular}{ccccccc}
+		\begin{tabular}{cccccc}
 			\hline
-			$ \mu_T $ & $ \sigma^2_T $ & $ \mu_I $ & $ \sigma_I^2 $ & $ E(T^2) $ & $ E(I^2) $\\
+			$\mu_T$ & $\sigma_T^2$ & $\mu_I$ & $\sigma_I^2$ & $E(T^2)$ & $E(I^2)$\\
 			\hline
-			0.7621 & 0.6285 & 7.4761 & 6.2477 & 0.9758 & 94.9024
+			0.7621 & 0.6285 & 7.4761 & 6.2477 & 0.9758 & 94.9024\\
+			\hline
 		\end{tabular}
 	\end{table}
 	
-	\section{Step 4}
-	
-	\subsection{Estimation of $W$}
+	\section{Step 3}
+	\subsection{Estimation of $E(W)$ and $D(W)$}
 	We have:
 	\[
 	E(W) = E(\sum_{j=1}^{N_T} T_j) + E(\sum_{k=1}^{N_I} I_k)
-	= N_tE(T) + N_IE(I)
+	= N_TE(T) + N_IE(I)
 	\]
 	and
 	\[
-	D(W) = D(\sum_{j=1}^{N_T} T_j) + D(\sum_{k=1}^{N_I} I_k)
-	= N_tD(T) + N_ID(I)
-	\].
+	\begin{aligned}
+		D(W)
+		&= D\left(\sum_{j=1}^{N_T} T_j\right)
+		+ D\left(\sum_{k=1}^{N_I} I_k\right)\\
+		&= E(N_T)D(T)+E(N_I)D(I)\\
+		&= E(N_T)E(T^2)+E(N_I)E(I^2).
+	\end{aligned}
+	\]
 	The estimated results are $E(W) = 61.8457$ and
-	$D(W) = 51.3014$.
+	$D(W) = 389.6947$.
+
+	\subsection{Assumption of Dependence Between $N_T$ and $N_I$}
+
+	The assumption of independence between $N_T$ and $N_I$ may not hold in practice. As indicated by the estimated correlation coefficient, the two types of requests exhibit a positive correlation, implying that $Cov(N_T,N_I)\neq 0$. Ignoring this dependence may introduce errors into the estimation of the total workload variance. Specifically, the variance calculation should account for the covariance between the two request types:
+	
+
+	\section{Step 4}
+	
+	\subsection{Estimation of $W$ Using The Central Limit Theorem}
+		According to the central limit theorem, 
+		\[
+			\frac{W-E(W)}{\sqrt{D(W)}} = \frac{{\sum_{j=1}^{N_T} T_j + \sum_{k=1}^{N_I} I_k}-E(W)}{\sqrt{D(W)}}
+			\sim\mathcal{N}(0,1)
+		\].
 	
 	\subsection{Estimation of $m$}
 	To estimate $m$, which is subject to the condition
 	$P(W>48m)$, we can use the following approximation:
 	\[
-	P(W>48m) = P(\hat{W} > \frac{48m-E(W)}{\sqrt{D(W)}})
+	P(W>48m) = P(\hat{W} > \frac{48m-E(W)}{\sqrt{D(W)}}) = 0.01
 	\],
 	where
 	\[
 	\hat{W} = \frac{W-E(W)}{\sqrt{D(W)}}
+	\], namely
+	\[
+		\frac{48m-E(W)}{\sqrt{D(W)}} = 2.33
 	\]
 	and $\hat{W}\sim\mathcal{N}(0,1)$.
-	The resulting estimate is $m = 2.09$.
+	The resulting estimate is $m = 2.2467$.
 	
+
 	\subsection{Rationale and Risks of Using the Central Limit Theorem}
-	\section{Step 5}
-	\subsection{title}
 	
+	When both $N_T$ and $N_I$ are sufficiently large, $W$ can be approximately modeled by a normal (Gaussian) distribution according to the Central Limit Theorem. However, potential risks arise from extreme values in the tails of the data distribution, which may lead to significant deviations from the normal approximation.
+	
+	Based on the estimated values of $N_T=45.45$ and $N_I=3.64$, the sample set is considered sufficient. Nevertheless, the imbalance between text and image requests may introduce instability into the normal approximation for image requests. Furthermore, the long-tailed distribution of service times caused by cold starts may affect the accuracy of the approximation, particularly in the right tail.
+
+	\section{Step 5}
+	\subsection{Monte Carlo Simulation Test}
+	To validate the accuracy of the Gaussian distribution model, a Monte Carlo simulation is conducted using randomly generated requests. The simulation consists of 500,000 iterations, with each iteration representing a one-minute interval. During each iteration, the total request processing time is calculated based on the estimated values of $N_T$ and $N_I$. An iteration is recorded as a failure if the total request processing time within that one-minute interval exceeds the GPU capacity of $48m$. 
+
+	\subsection{Test result}
+	The results $ratio = 0.009726$ indicate that the failure ratio remains below 0.01, thereby satisfying the specified requirement.	
 \end{document}
