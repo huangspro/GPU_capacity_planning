@@ -7,7 +7,7 @@
 \usepackage{cleveref}
 
 \title{Report}
-\author{Haoyu Huang}
+\author{Haoyu Huang \\ \\ SUAT25000228}
 
 \begin{document}
 	\maketitle
@@ -233,7 +233,7 @@
 	
 	\section{Step 3}
 	\subsection{Estimation of $E(W)$ and $D(W)$}
-	We have:
+	Assuming $N_T$ and $N_I$ are independent to each other, We have:
 	\[
 \begin{aligned}
 E(W)
@@ -258,7 +258,9 @@ E(W)
 
 	\subsection{Assumption of Dependence Between $N_T$ and $N_I$}
 
-	The assumption of independence between $N_T$ and $N_I$ may not hold in practice. As indicated by the estimated correlation coefficient, the two types of requests exhibit a positive correlation, implying that $Cov(N_T,N_I)\neq 0$. Ignoring this dependence may introduce errors into the estimation of the total workload variance. Specifically, the variance calculation should account for the covariance between the two request types:
+	The assumption of independence between $N_T$ and $N_I$ may not hold in practice. As indicated by the estimated correlation coefficient, the two types of requests exhibit a positive correlation, implying that $Cov(N_T,N_I)\neq 0$. Ignoring this dependence may introduce errors into the estimation of the total workload variance. Specifically, the variance calculation should account for the covariance between the two request types.
+	
+	In the following report we will follow the assumption of independence.
 	
 
 	\section{Step 4}
@@ -298,5 +300,45 @@ E(W)
 	To validate the accuracy of the Gaussian distribution model, a Monte Carlo simulation is conducted using randomly generated requests. The simulation consists of 500,000 iterations, with each iteration representing a one-minute interval. During each iteration, the total request processing time is calculated based on the estimated values of $N_T$ and $N_I$. An iteration is recorded as a failure if the total request processing time within that one-minute interval exceeds the GPU capacity of $48m$. 
 
 	\subsection{Test result}
-	The results $ratio = 0.009726$ indicate that the failure ratio remains below 0.01, thereby satisfying the specified requirement.	
+	The results $ratio = 0.9726\%$ indicate that the failure ratio remains below 1\%, thereby satisfying the specified requirement.
+	
+	\section{Step 6}
+	
+	\subsection{Scene A}
+	Assuming that the number of text and image requests rise by 30\%, while the time of single text or image request remains unchanged, the number of GPU $m$ should be updated. Specifically,
+	\[
+		N_T = N_T \cdot 130\%
+	\]
+	\[
+		N_I = N_I \cdot 130\%
+	\]. If m remains unchanged, the Monte Carlo Simulation Test suggests that the ratio of GPU overload will rise to 11.12\%. The re-evaluation of m based on the new situation is approximately 2.7676.
+	\subsection{Scene B}	
+	Assuming that the likelihood of image request is changed to 35\%, specifically, 
+	\[
+		N_I = (N_T+N_I)\cdot35\%
+	\]
+	\[
+		N_T = (N_T+N_I)\cdot65\%
+	\]. If m remains unchanged, the Monte Carlo Simulation Test suggests that the ratio of GPU overload will rise to 86.46\%. To maintain the 1\% requirement, m should be adjusted to 5.1615.
+	\section{Step 7}
+	\subsection{Decision Memorandum}
+	\begin{itemize}
+		\item Minimum configuration required to meet the current service-level targets: $m=2.2467$;
+		
+		\item Actual recommended configuration: $m=3$;
+		
+		\item Recommended configuration after three months: $m=3$;
+		
+		\item When the proportion of image requests increases to 35\%, simply adding GPU machines is expected to become impractical, since $I=9.81T$. The estimated value of $m$ will increase sharply as $I$ increases.
+		
+		\item The risk of GPU overload arises primarily from image request processing time and cold-start latency, whereas request fluctuations and average data traffic have comparatively minor contributions.
+		
+		\item It is recommended that the GPU service platform continuously monitor the average number of image requests and update the estimation of $W$ in real time. A GPU capacity expansion warning should be triggered if the following indicator falls below 2.33:
+		\[
+		\frac{48m-E(W)}{\sqrt{D(W)}} < 2.33,
+		\]
+		as this would indicate a degradation in the 1\% requirement.
+		
+		\item The conclusions of this report rely on the independence assumption between $N_T$ and $N_I$, as well as the Gaussian distribution model established based on prior knowledge. The independence assumption between $N_T$ and $N_I$ warrants further investigation through continuous data collection, particularly given the increasing popularity of multimodal LLMs.	
+	\end{itemize}
 \end{document}
