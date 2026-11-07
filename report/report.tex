@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{report}
+\documentclass[10pt,a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -6,7 +6,7 @@
 \usepackage{amsmath}
 \usepackage{cleveref}
 
-\title{Report}
+\title{Probabilistic Modeling and Capacity Planning for GPU-Based AI Services}
 \author{Haoyu Huang \\ \\ SUAT25000228}
 
 \begin{document}
@@ -98,16 +98,19 @@
 		\end{tabular}
 	\end{table}
 	
+
 	\subsection{Validating the Poisson Distributions}
-	To evaluate the goodness of fit of the Poisson distributions,
-	we conducted a $\chi^2$ goodness-of-fit test, defined as:
+	To evaluate the goodness of fit of the Poisson distributions, we conducted a $\chi^2$ goodness-of-fit test, defined as:
 	\[
 	\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i},
 	\]
-	where $O_i$ denotes the observed frequency of class $i$,
-	and $E_i$ denotes its corresponding expected frequency.
-	The test results are presented in
-	\cref{tab:poisson_goodness-of-fit}.
+	where $O_i$ denotes the observed frequency of class $i$, and $E_i$ denotes its corresponding expected frequency. The test results are presented in \cref{tab:poisson_goodness-of-fit}. The results indicate that the Poisson distributions do not adequately fit the empirical distributions of either text or image requests. This discrepancy may be attributed to the potential dependence among requests within a given minute, which undermines the assumption of independent event occurrences at a fixed time interval. In real-world scenarios, users tend to send multiple messages to AI agents in rapid succession, thereby violating a fundamental assumption of the Poisson model.
+
+	A non-homogeneous Poisson process is likely to better fit the empirical request distribution, as its key distinction from the homogeneous Poisson process is that the event arrival rate is allowed to vary over time. Specifically, the number of events occurring within a time interval $[a,b]$ follows a Poisson distribution with a time-dependent parameter:
+	\[
+	N(b)-N(a) \sim \operatorname{Poisson}\left(\int_a^b \lambda(t)\,dt\right),
+	\]
+	where $\lambda(t)$ denotes the instantaneous event arrival rate at time $t$. Unlike the homogeneous Poisson process, which assumes a constant arrival rate, the non-homogeneous Poisson process allows the arrival rate to vary over time, thereby accommodating temporal variations in request intensity.
 	
 	\begin{table}[H]
 		\centering
@@ -235,14 +238,14 @@
 	\subsection{Estimation of $E(W)$ and $D(W)$}
 	Assuming $N_T$ and $N_I$ are independent to each other, We have:
 	\[
-\begin{aligned}
-E(W)
-&= E\left(\sum_{j=1}^{N_T}T_j\right)
- + E\left(\sum_{k=1}^{N_I}I_k\right)\\
-&= E(N_T)E(T)+E(N_I)E(I)\\
-&= \lambda_T\mu_T+\lambda_I\mu_I.
-\end{aligned}
-\]
+		\begin{aligned}
+		E(W)
+		&= E\left(\sum_{j=1}^{N_T}T_j\right)
+		 + E\left(\sum_{k=1}^{N_I}I_k\right)\\
+		&= E(N_T)E(T)+E(N_I)E(I)\\
+		&= \lambda_T\mu_T+\lambda_I\mu_I.
+		\end{aligned}
+	\]
 	and
 	\[
 	\begin{aligned}
@@ -253,8 +256,21 @@ E(W)
 		&= E(N_T)E(T^2)+E(N_I)E(I^2).
 	\end{aligned}
 	\]
-	The estimated results are $E(W) = 61.8457$ and
-	$D(W) = 389.6947$.
+	The estimated results are presented on \cref{tab:W_estimation}.
+	\begin{table}[H]
+		\centering
+		\caption{Estimated Parameters of the Gaussian Distributions}
+		\label{tab:W_estimation}
+		\begin{tabular}{cccccc}
+			\hline
+			Target & Estimation & Contribution of $T$ & Contribution of $I$\\
+			\hline
+			$E(W)$ & 61.845   & 34.63 & 27.22 \\
+			\hline
+			$D(W)$ & 389.6947 & 44.34 &  345.44
+
+		\end{tabular}
+	\end{table}
 
 	\subsection{Assumption of Dependence Between $N_T$ and $N_I$}
 
